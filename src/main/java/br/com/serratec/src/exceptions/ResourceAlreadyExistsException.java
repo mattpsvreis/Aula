@@ -19,10 +19,9 @@ public class ResourceAlreadyExistsException extends RuntimeException {
 	public ResourceAlreadyExistsException(String message) {
 		this.message = message;
 	}
-	
+
 	public ResourceAlreadyExistsException(String message, String value) {
 		this.value = value;
 		this.message = message + value;
 	}
 }
-
