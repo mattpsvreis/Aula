@@ -53,6 +53,18 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(status).body(err);
   }
 
+  @ExceptionHandler(InvalidValueException.class)
+  public ResponseEntity<ErrorBody> handleInvalidValueException(InvalidValueException e,
+      HttpServletRequest request) {
+    String error = "Invalid value: " + e.getValue();
+
+    HttpStatus status = HttpStatus.BAD_REQUEST;
+
+    ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+
+    return ResponseEntity.status(status).body(err);
+  }
+
   @ExceptionHandler(HttpServerErrorException.class)
   public ResponseEntity<ErrorBody> handleHttpServerErrorException(HttpServerErrorException e,
       HttpServletRequest request) {
