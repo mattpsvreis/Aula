@@ -25,6 +25,11 @@ public class UserResource {
     return service.findByUsername(username);
   }
 
+  @GetMapping("/user/{cpf}")
+  public User findByCpf(@PathVariable String cpf) {
+    return service.findByCpf(cpf);
+  }
+
   @GetMapping("/users")
   public ResponseEntity<List<User>> findAll() {
     return ResponseEntity.ok().body(service.findAll());

@@ -2,6 +2,7 @@ package br.com.serratec.src.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,9 +23,23 @@ public class UserService {
   @Autowired
   BCryptPasswordEncoder bCryptPasswordEncoder;
 
+  public List<User> findAll() {
+    return repository.findAll();
+  }
+
+  public User findById(UUID id) {
+    Optional<User> user = repository.findById(id);
+    return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_ID + id));
+  }
+
   public User findByUsername(String username) {
     Optional<User> user = repository.findByUsername(username);
-    return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND + username));
+    return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_USERNAME + username));
+  }
+
+  public User findByCpf(String cpf) {
+    Optional<User> user = repository.findByCpf(cpf);
+    return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_CPF + cpf));
   }
 
   public User create(User user) {
@@ -42,7 +57,8 @@ public class UserService {
   }
 
   public User update(User user) {
-    User updatedUser = repository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND + user.getId()));
+    User updatedUser = repository.findById(user.getId())
+        .orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_ID + user.getId()));
 
     Optional<User> checkCpf = repository.findByCpf(user.getCpf());
 
@@ -63,9 +79,5 @@ public class UserService {
     }
 
     return repository.save(updatedUser);
-  }
-
-  public List<User> findAll() {
-    return repository.findAll();
   }
 }
