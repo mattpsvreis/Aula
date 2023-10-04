@@ -30,5 +30,4 @@ public class User {
 
 	@Column(name = "password", nullable = false, unique = false)
 	private String password;
-	
 }
