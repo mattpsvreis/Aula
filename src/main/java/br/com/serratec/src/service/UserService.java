@@ -48,12 +48,16 @@ public class UserService {
   }
 
   public User create(User user) {
-    if (repository.findByCpf(user.getCpf()).isPresent()) {
-      throw new ResourceAlreadyExistsException(Constants.CPF_ALREADY_REGISTERED + user.getCpf());
+    if (repository.findByUsername(user.getUsername()).isPresent()) {
+      throw new ResourceAlreadyExistsException(Constants.ALREADY_REGISTERED_USERNAME + user.getUsername());
     }
 
-    if (repository.findByUsername(user.getUsername()).isPresent()) {
-      throw new ResourceAlreadyExistsException(Constants.USERNAME_ALREADY_REGISTERED + user.getUsername());
+    if (repository.findByCpf(user.getCpf()).isPresent()) {
+      throw new ResourceAlreadyExistsException(Constants.ALREADY_REGISTERED_CPF + user.getCpf());
+    }
+
+    if (repository.findByEmail(user.getEmail()).isPresent()) {
+      throw new ResourceAlreadyExistsException(Constants.ALREADY_REGISTERED_EMAIL + user.getEmail());
     }
 
     user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -62,27 +66,43 @@ public class UserService {
   }
 
   public User update(User user) {
-    User updatedUser = repository.findById(user.getId())
+    User existingUser = repository.findById(user.getId())
         .orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_ID + user.getId()));
+
+    Optional<User> checkUsername = repository.findByUsername(user.getUsername());
+
+    if (checkUsername.isPresent() && checkUsername.get().getUsername() != existingUser.getUsername()) {
+      throw new ResourceAlreadyExistsException(Constants.ALREADY_REGISTERED_USERNAME + user.getUsername());
+    }
 
     Optional<User> checkCpf = repository.findByCpf(user.getCpf());
 
-    if (checkCpf.isPresent() && checkCpf.get().getCpf() != updatedUser.getCpf()) {
-      throw new ResourceAlreadyExistsException(Constants.CPF_ALREADY_REGISTERED + user.getCpf());
+    if (checkCpf.isPresent() && checkCpf.get().getCpf() != existingUser.getCpf()) {
+      throw new ResourceAlreadyExistsException(Constants.ALREADY_REGISTERED_CPF + user.getCpf());
+    }
+
+    Optional<User> checkEmail = repository.findByEmail(user.getEmail());
+
+    if (checkEmail.isPresent() && checkEmail.get().getEmail() != existingUser.getEmail()) {
+      throw new ResourceAlreadyExistsException(Constants.ALREADY_REGISTERED_EMAIL + user.getEmail());
     }
 
     if (!user.getUsername().isEmpty()) {
-      updatedUser.setUsername(user.getUsername());
+      existingUser.setUsername(user.getUsername());
     }
 
     if (!user.getCpf().isEmpty()) {
-      updatedUser.setCpf(user.getCpf());
+      existingUser.setCpf(user.getCpf());
+    }
+
+    if (!user.getEmail().isEmpty()) {
+      existingUser.setEmail(user.getEmail());
     }
 
     if (!user.getPassword().isEmpty()) {
-      updatedUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+      existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
     }
 
-    return repository.save(updatedUser);
+    return repository.save(existingUser);
   }
 }
