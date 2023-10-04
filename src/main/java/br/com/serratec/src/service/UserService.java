@@ -42,6 +42,11 @@ public class UserService {
     return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_CPF + cpf));
   }
 
+  public User findByEmail(String email) {
+    Optional<User> user = repository.findByEmail(email);
+    return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_EMAIL + email));
+  }
+
   public User create(User user) {
     if (repository.findByCpf(user.getCpf()).isPresent()) {
       throw new ResourceAlreadyExistsException(Constants.CPF_ALREADY_REGISTERED + user.getCpf());

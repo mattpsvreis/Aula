@@ -30,6 +30,11 @@ public class UserResource {
     return service.findByCpf(cpf);
   }
 
+  @GetMapping("/user/{email}")
+  public User findByEmail(@PathVariable String email) {
+    return service.findByEmail(email);
+  }
+
   @GetMapping("/users")
   public ResponseEntity<List<User>> findAll() {
     return ResponseEntity.ok().body(service.findAll());

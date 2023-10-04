@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -27,6 +28,10 @@ public class User {
 	@Size(min = 4, max = 26, message = "Username must be between 4 and 26 characters")
 	@Column(name = "username", nullable = false, unique = true)
 	private String username;
+
+	@Email
+	@Column(name = "email", nullable = false, unique = true)
+	private String email;
 
 	@Column(name = "password", nullable = false, unique = false)
 	private String password;
