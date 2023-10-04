@@ -41,6 +41,30 @@ public class UserService {
     return repository.save(user);
   }
 
+  public User update(User user) {
+    User updatedUser = repository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND + user.getId()));
+
+    Optional<User> checkCpf = repository.findByCpf(user.getCpf());
+
+    if (checkCpf.isPresent() && checkCpf.get().getCpf() != updatedUser.getCpf()) {
+      throw new ResourceAlreadyExistsException(Constants.CPF_ALREADY_REGISTERED + user.getCpf());
+    }
+
+    if (!user.getUsername().isEmpty()) {
+      updatedUser.setUsername(user.getUsername());
+    }
+
+    if (!user.getCpf().isEmpty()) {
+      updatedUser.setCpf(user.getCpf());
+    }
+
+    if (!user.getPassword().isEmpty()) {
+      updatedUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    }
+
+    return repository.save(updatedUser);
+  }
+
   public List<User> findAll() {
     return repository.findAll();
   }
