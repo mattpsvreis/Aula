@@ -17,70 +17,85 @@ import br.com.serratec.src.utils.ErrorBody;
 @RestControllerAdvice
 public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
 
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<ErrorBody> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
+	@ExceptionHandler(NoPermissionException.class)
+	public ResponseEntity<ErrorBody> noPermissionException(NoPermissionException e, HttpServletRequest request) {
 
-    String error = "Resource not found";
+		String error = "No permission for endpoint";
 
-    HttpStatus status = HttpStatus.NOT_FOUND;
+		HttpStatus status = HttpStatus.FORBIDDEN;
 
-    ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 
-    return ResponseEntity.status(status).body(err);
-  }
+		return ResponseEntity.status(status).body(err);
+	}
 
-  @ExceptionHandler(ResourceAlreadyExistsException.class)
-  public ResponseEntity<ErrorBody> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e,
-      HttpServletRequest request) {
-    String error = "Resource already exists";
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ErrorBody> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
 
-    HttpStatus status = HttpStatus.NOT_FOUND;
+		String error = "Resource not found";
 
-    ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		HttpStatus status = HttpStatus.NOT_FOUND;
 
-    return ResponseEntity.status(status).body(err);
-  }
+		ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 
-  @ExceptionHandler(FieldCantBeNullException.class)
-  public ResponseEntity<ErrorBody> handleFieldCantBeNullException(FieldCantBeNullException e,
-      HttpServletRequest request) {
-    String error = "Field can't be null";
+		return ResponseEntity.status(status).body(err);
+	}
 
-    HttpStatus status = HttpStatus.BAD_REQUEST;
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	public ResponseEntity<ErrorBody> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e,
+			HttpServletRequest request) {
+		String error = "Resource already exists";
 
-    ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		HttpStatus status = HttpStatus.CONFLICT;
 
-    return ResponseEntity.status(status).body(err);
-  }
+		ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 
-  @ExceptionHandler(InvalidValueException.class)
-  public ResponseEntity<ErrorBody> handleInvalidValueException(InvalidValueException e,
-      HttpServletRequest request) {
-    String error = "Invalid value: " + e.getValue();
+		return ResponseEntity.status(status).body(err);
+	}
 
-    HttpStatus status = HttpStatus.BAD_REQUEST;
+	@ExceptionHandler(FieldCantBeNullException.class)
+	public ResponseEntity<ErrorBody> handleFieldCantBeNullException(FieldCantBeNullException e,
+			HttpServletRequest request) {
+		String error = "Field can't be null";
 
-    ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		HttpStatus status = HttpStatus.BAD_REQUEST;
 
-    return ResponseEntity.status(status).body(err);
-  }
+		ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 
-  @ExceptionHandler(HttpServerErrorException.class)
-  public ResponseEntity<ErrorBody> handleHttpServerErrorException(HttpServerErrorException e,
-      HttpServletRequest request) {
-    HttpStatus status = e.getStatusCode();
-    ErrorBody error = new ErrorBody(Instant.now(), status.value(), "Erro interno de comunicação",
-        e.getMessage(), request.getRequestURI());
-    return ResponseEntity.status(status).body(error);
-  }
+		return ResponseEntity.status(status).body(err);
+	}
 
-  @ExceptionHandler(RequestRejectedException.class)
-  public ResponseEntity<ErrorBody> handleRequestRejectedException(HttpServerErrorException e,
-      HttpServletRequest request) {
-    HttpStatus status = e.getStatusCode();
-    ErrorBody error = new ErrorBody(Instant.now(), status.value(), "Requisição negada: " + e.getMessage(),
-        e.getMessage(), request.getRequestURI());
-    return ResponseEntity.status(status).body(error);
-  }
+	@ExceptionHandler(InvalidValueException.class)
+	public ResponseEntity<ErrorBody> handleInvalidValueException(InvalidValueException e, HttpServletRequest request) {
+		String error = "Invalid value: " + e.getValue();
 
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+
+		ErrorBody err = new ErrorBody(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+
+		return ResponseEntity.status(status).body(err);
+	}
+
+	@ExceptionHandler(HttpServerErrorException.class)
+	public ResponseEntity<ErrorBody> handleHttpServerErrorException(HttpServerErrorException e,
+			HttpServletRequest request) {
+		HttpStatus status = e.getStatusCode();
+
+		ErrorBody error = new ErrorBody(Instant.now(), status.value(), "Erro interno de comunicação: ", e.getMessage(),
+				request.getRequestURI());
+
+		return ResponseEntity.status(status).body(error);
+	}
+
+	@ExceptionHandler(RequestRejectedException.class)
+	public ResponseEntity<ErrorBody> handleRequestRejectedException(HttpServerErrorException e,
+			HttpServletRequest request) {
+
+		HttpStatus status = e.getStatusCode();
+
+		ErrorBody error = new ErrorBody(Instant.now(), status.value(), "Requisição negada: " + e.getMessage(),
+				e.getMessage(), request.getRequestURI());
+
+		return ResponseEntity.status(status).body(error);
+	}
 }
