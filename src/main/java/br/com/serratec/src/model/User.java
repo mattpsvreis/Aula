@@ -33,10 +33,12 @@ public class User {
 	@Column(name = "password", nullable = false, unique = false)
 	private String password;
 	
+	public User() {
+	}
+
 	public User(UUID id, String cpf,
 			@Size(min = 4, max = 26, message = "Username must be between 4 and 26 characters") String username,
 			@Email String email, String password) {
-		super();
 		this.id = id;
 		this.cpf = cpf;
 		this.username = username;

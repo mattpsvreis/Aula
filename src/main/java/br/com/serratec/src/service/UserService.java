@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.serratec.src.exceptions.NoPermissionException;
 import br.com.serratec.src.exceptions.ResourceAlreadyExistsException;
 import br.com.serratec.src.exceptions.ResourceNotFoundException;
 import br.com.serratec.src.model.User;
@@ -30,6 +29,7 @@ public class UserService {
 
 	public User findById(UUID id) {
 		Optional<User> user = repository.findById(id);
+		System.out.println(user);
 		return user.orElseThrow(() -> new ResourceNotFoundException(Constants.USER_NOT_FOUND_ID + id));
 	}
 
